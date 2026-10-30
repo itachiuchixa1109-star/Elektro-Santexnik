@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Usta Dispetcher — demo</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#e5eaf2;--blue:#2457d6;--green:#14804a;--orange:#b45309;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#14284b;color:white;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:22px;margin:0 0 5px}header p{margin:0;color:#d6e2ff;font-size:13px}
+.wrap{max-width:1200px;margin:24px auto;padding:0 18px}.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;background:var(--blue);color:white}button.secondary{background:#e8eefc;color:#1d3d91}button.danger{background:#fee4e2;color:var(--red)}button.small{padding:7px 10px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:0 3px 12px #1b31520a}
+.label{font-size:13px;color:var(--muted);margin-bottom:8px}.metric{font-size:27px;font-weight:800}.sub{font-size:12px;color:var(--muted);margin-top:5px}
+.layout{display:grid;grid-template-columns: minmax(300px, .85fr) minmax(450px,1.6fr);gap:16px}.panel h2{font-size:17px;margin:0 0 15px}
+form{display:grid;gap:11px}label{font-size:13px;font-weight:700;color:#344054;display:grid;gap:6px}
+input,select,textarea{width:100%;padding:10px 11px;border:1px solid #cfd7e5;border-radius:9px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:75px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:680px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}th{font-size:12px;color:var(--muted);background:#f8faff}
+.badge{display:inline-block;padding:5px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#eef2ff;color:#3449a8}.status{min-width:145px;padding:7px}
+.notice{font-size:12px;line-height:1.5;background:#fff8e6;border:1px solid #f6df9b;padding:12px;border-radius:10px;color:#7a4a00;margin-top:14px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filters input,.filters select{max-width:210px}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:25px}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:480px){.cards{grid-template-columns:1fr 1fr}.metric{font-size:22px}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div><h1>🔧 Usta Dispetcher</h1><p>Santexnik va elektr xizmatlari uchun buyurtmalar boshqaruvi</p></div><div><span class="badge">Demo versiya</span></div></header>
+<div class="wrap">
+  <div class="topline"><div><h2 style="margin:0 0 5px">Boshqaruv paneli</h2><div class="sub">Buyurtmalarni kiriting, ustaga biriktiring va komissiyani hisoblang.</div></div><button onclick="document.getElementById('customer').focus()">+ Yangi buyurtma</button></div>
+  <section class="cards">
+    <div class="card"><div class="label">Jami buyurtmalar</div><div class="metric" id="total">0</div><div class="sub">Barcha buyurtmalar</div></div>
+    <div class="card"><div class="label">Ochiq buyurtmalar</div><div class="metric" id="open">0</div><div class="sub">Hali yakunlanmagan</div></div>
+    <div class="card"><div class="label">Bajarilgan buyurtmalar</div><div class="metric" id="done">0</div><div class="sub">Holati “Bajarildi”</div></div>
+    <div class="card"><div class="label">Kompaniya komissiyasi</div><div class="metric" id="commission">0 so‘m</div><div class="sub">Bajarilgan ishlar bo‘yicha</div></div>
+  </section>
+  <div class="layout">
+    <section class="panel">
+      <h2>📝 Yangi buyurtma</h2>
+      <form id="orderForm">
+        <label>Mijoz ismi<input id="customer" required placeholder="Masalan: Ali Valiyev"></label>
+        <div class="two"><label>Telefon<input id="phone" required type="tel" placeholder="+998 90 123 45 67"></label><label>Xizmat turi<select id="service"><option>Santexnik</option><option>Elektrik</option></select></label></div>
+        <label>Manzil<input id="address" required placeholder="Ko‘cha, uy, mo‘ljal"></label>
+        <label>Muammo / xizmat tavsifi<textarea id="problem" required placeholder="Masalan: kran oqyapti"></textarea></label>
+        <div class="two"><label>Usta<select id="worker"><option>Santexnik usta</option><option>Elektr usta</option></select></label><label>Buyurtma sanasi<input id="date" type="date" required></label></div>
+        <div class="two"><label>Xizmat narxi (so‘m)<input id="price" type="number" min="0" step="1000" value="0" required></label><label>Komissiya (%)<input id="rate" type="number" min="0" max="100" step="0.5" value="25" required></label></div>
+        <label>Holati<select id="status"><option>Yangi</option><option>Usta biriktirildi</option><option>Yo‘lda</option><option>Ish jarayonida</option><option>Bajarildi</option><option>Bekor qilindi</option></select></label>
+        <button type="submit">Buyurtmani saqlash</button>
+      </form>
+      <div class="notice"><b>Eslatma:</b> Bu boshlang‘ich demo. Ma’lumotlar hozircha faqat shu brauzerda saqlanadi. Internetdagi umumiy baza va boshqa kompyuterdan kirish uchun server/bulut bazasiga ulash kerak.</div>
+    </section>
+    <section class="panel">
+      <h2>📋 Buyurtmalar ro‘yxati</h2>
+      <div class="filters"><input id="search" placeholder="Ism, telefon yoki manzil bo‘yicha qidirish"><select id="filterService"><option value="">Barcha xizmatlar</option><option>Santexnik</option><option>Elektrik</option></select><select id="filterStatus"><option value="">Barcha holatlar</option><option>Yangi</option><option>Usta biriktirildi</option><option>Yo‘lda</option><option>Ish jarayonida</option><option>Bajarildi</option><option>Bekor qilindi</option></select></div>
+      <div class="tablewrap"><table><thead><tr><th>Mijoz / aloqa</th><th>Xizmat / usta</th><th>Narx / komissiya</th><th>Holati</th><th>Amal</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div id="empty" class="sub" style="padding:22px;text-align:center">Hozircha buyurtmalar yo‘q. Chap tomondagi shakl orqali birinchi buyurtmani kiriting.</div>
+    </section>
+  </div>
+</div>
+<footer>Usta Dispetcher • boshlang‘ich prototip</footer>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='usta_dispatch_demo_v1';
+let orders=[];
+try{orders=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){orders=[]}
+$('date').value=new Date().toISOString().slice(0,10);
+$('service').addEventListener('change',()=>{$('worker').value=$('service').value==='Elektrik'?'Elektr usta':'Santexnik usta'});
+function money(n){return (Number(n)||0).toLocaleString('uz-UZ')+' so‘m'}
+function save(){localStorage.setItem(KEY,JSON.stringify(orders));render()}
+function render(){
+ const q=$('search').value.toLowerCase(), fs=$('filterService').value, ft=$('filterStatus').value;
+ const visible=orders.filter(o=>(!q||(o.customer+' '+o.phone+' '+o.address).toLowerCase().includes(q))&&(!fs||o.service===fs)&&(!ft||o.status===ft));
+ $('rows').innerHTML=visible.map(o=>`<tr><td><b>${esc(o.customer)}</b><br><span class="sub">${esc(o.phone)}</span><br><span class="sub">${esc(o.address)}</span></td><td><span class="badge">${esc(o.service)}</span><br><span class="sub">${esc(o.worker)} · ${esc(o.date)}</span><br><span class="sub">${esc(o.problem)}</span></td><td>${money(o.price)}<br><span class="sub">Komissiya: ${money(o.status==='Bajarildi'?o.price*o.rate/100:0)} (${o.rate}%)</span></td><td><select class="status" onchange="changeStatus('${o.id}',this.value)">${['Yangi','Usta biriktirildi','Yo‘lda','Ish jarayonida','Bajarildi','Bekor qilindi'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="small danger" onclick="removeOrder('${o.id}')">O‘chirish</button></td></tr>`).join('');
+ $('empty').style.display=visible.length?'none':'block';
+ $('total').textContent=orders.length;
+ $('open').textContent=orders.filter(o=>!['Bajarildi','Bekor qilindi'].includes(o.status)).length;
+ $('done').textContent=orders.filter(o=>o.status==='Bajarildi').length;
+ $('commission').textContent=money(orders.filter(o=>o.status==='Bajarildi').reduce((s,o)=>s+Number(o.price)*Number(o.rate)/100,0));
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('orderForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const o={id:Date.now().toString(),customer:$('customer').value.trim(),phone:$('phone').value.trim(),service:$('service').value,address:$('address').value.trim(),problem:$('problem').value.trim(),worker:$('worker').value,date:$('date').value,price:Number($('price').value),rate:Number($('rate').value),status:$('status').value};
+ orders.unshift(o);save();e.target.reset();$('date').value=new Date().toISOString().slice(0,10);$('price').value=0;$('rate').value=25;$('worker').value='Santexnik usta';
+});
+window.changeStatus=(id,status)=>{orders=orders.map(o=>o.id===id?{...o,status}:o);save()};
+window.removeOrder=id=>{if(confirm('Bu buyurtma o‘chirilsinmi?')){orders=orders.filter(o=>o.id!==id);save()}};
+['search','filterService','filterStatus'].forEach(id=>$(id).addEventListener('input',render));
+render();
+</script>
+</body>
+</html>
